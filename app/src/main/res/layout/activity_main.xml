@@ -15,7 +15,27 @@
         android:text="获取最近一次定位信息"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
-
+    <Button
+        android:id="@+id/btn_camera_intent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="相机 Intent"
+        app:layout_constraintLeft_toLeftOf="@id/btn_last_location"
+        app:layout_constraintBottom_toTopOf="@id/btn_last_location"/>
+    <Button
+        android:id="@+id/btn_camera_x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="相机 camera X"
+        app:layout_constraintLeft_toLeftOf="@id/btn_camera_intent"
+        app:layout_constraintBottom_toTopOf="@id/btn_camera_intent"/>
+    <Button
+        android:id="@+id/btn_camera_camera2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="相机 camera2"
+        app:layout_constraintLeft_toLeftOf="@id/btn_camera_x"
+        app:layout_constraintBottom_toTopOf="@id/btn_camera_x"/>
     <TextView
         android:id="@+id/tv_show"
         android:layout_width="wrap_content"

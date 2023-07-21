@@ -3,6 +3,7 @@ package com.enabot.jetpackrelearn
 
 import android.R.attr.gravity
 import android.content.Context
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.hardware.Sensor
@@ -77,7 +78,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SensorEventListener {
         }
         currentLocationInfo()
         setSensorListener()
-
+        viewBinding.btnCameraIntent.setOnUnFastClickListener {
+            val intent = Intent(this, CameraIntentActivity::class.java)
+            startActivity(intent)
+        }
+        viewBinding.btnCameraCamera2.setOnUnFastClickListener {
+            val intent = Intent(this, Camera2Activity::class.java)
+            startActivity(intent)
+        }
+        viewBinding.btnCameraX.setOnUnFastClickListener {
+            val intent = Intent(this, CameraXActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setSensorListener() {
@@ -85,11 +97,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SensorEventListener {
         val deviceSensors: List<Sensor> = sensorManager.getSensorList(Sensor.TYPE_ALL)
         for (index in deviceSensors.indices) {
             log("传感器$index =${deviceSensors[index].type}")
-            sensorManager.registerListener(
-                this,
-                deviceSensors[index],
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
+//            sensorManager.registerListener(
+//                this,
+//                deviceSensors[index],
+//                SensorManager.SENSOR_DELAY_NORMAL
+//            )
         }
 
         //使用有效运动传感器
