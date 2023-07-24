@@ -4,11 +4,15 @@ import android.content.ContentValues
 import android.os.Build
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.TorchState
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FallbackStrategy
 import androidx.camera.video.MediaStoreOutputOptions
@@ -38,6 +42,11 @@ import java.util.concurrent.Executors
  * Preview + VideoCapture + ImageCapture：LIMITED 及更高级设备。
  * Preview + VideoCapture + ImageAnalysis：添加到 Android 7(N) 的 LEVEL_3（最高级）设备。
  * Preview + VideoCapture + ImageAnalysis + ImageCapture：不支持。
+ *
+ * 配置
+ * https://developer.android.com/training/camerax/configuration?hl=zh-cn
+ * 聚焦
+ * https://blog.csdn.net/Android_LeeJiaLun/article/details/126116616
  */
 class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
     private var imageCapture: ImageCapture? = null
@@ -46,6 +55,7 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
     private lateinit var cameraExecutor: ExecutorService
     private var allPermissionsGranted: Boolean = false
     private var backCamera = true
+    private var camera: Camera? = null
     override fun initViewBinding(): ActivityCameraXBinding {
         return ActivityCameraXBinding.inflate(layoutInflater)
     }
@@ -64,6 +74,21 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
             backCamera = !backCamera
             startCamera()
         }
+        // 启用或停用手电筒
+        viewBinding.switchTorch.setOnUnFastClickListener {
+            val torchState = camera?.cameraInfo?.torchState?.value
+            if (torchState == TorchState.ON) {
+                viewBinding.ivTorch.isSelected = false
+                camera?.cameraControl?.enableTorch(false)
+            } else {
+                viewBinding.ivTorch.isSelected = true
+                camera?.cameraControl?.enableTorch(true)
+            }
+        }
+        //对焦
+        viewBinding.viewFinder.setOnUnFastClickListener {
+
+        }
         cameraExecutor = Executors.newSingleThreadExecutor()
         // 请求必要的权限
         checkPermission(
@@ -81,8 +106,8 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
         // Create time stamped name and MediaStore entry.
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.CHINA)
-            .format(System.currentTimeMillis())
+        val name =
+            SimpleDateFormat(FILENAME_FORMAT, Locale.CHINA).format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -92,18 +117,13 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
         }
 
         // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(
-                contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            )
-            .build()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
+            contentResolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+        ).build()
 
         // Set up image capture listener, which is triggered after photo has
         // been taken
-        imageCapture.takePicture(
-            outputOptions,
+        imageCapture.takePicture(outputOptions,
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
@@ -115,8 +135,7 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     log(msg)
                 }
-            }
-        )
+            })
     }
 
     private fun captureVideo() {
@@ -134,8 +153,7 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
         }
 
         // create and start a new recording session
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
@@ -144,48 +162,46 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
             }
         }
 
-        val mediaStoreOutputOptions = MediaStoreOutputOptions
-            .Builder(contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
-            .setContentValues(contentValues)
-            .build()
-        recording = videoCapture.output
-            .prepareRecording(this, mediaStoreOutputOptions)
-            .apply {
-                if (PermissionChecker.checkSelfPermission(this@CameraXActivity,
-                        android.Manifest.permission.RECORD_AUDIO) ==
-                    PermissionChecker.PERMISSION_GRANTED)
-                {
-                    withAudioEnabled()
-                }
+        val mediaStoreOutputOptions = MediaStoreOutputOptions.Builder(
+            contentResolver,
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        ).setContentValues(contentValues).build()
+        recording = videoCapture.output.prepareRecording(this, mediaStoreOutputOptions).apply {
+            if (PermissionChecker.checkSelfPermission(
+                    this@CameraXActivity, android.Manifest.permission.RECORD_AUDIO
+                ) == PermissionChecker.PERMISSION_GRANTED
+            ) {
+                withAudioEnabled()
             }
-            .start(ContextCompat.getMainExecutor(this)) { recordEvent ->
-                when(recordEvent) {
-                    is VideoRecordEvent.Start -> {
-                        viewBinding.videoCaptureButton.apply {
-                            text = getString(R.string.stop_capture)
-                            isEnabled = true
-                        }
+        }.start(ContextCompat.getMainExecutor(this)) { recordEvent ->
+            when (recordEvent) {
+                is VideoRecordEvent.Start -> {
+                    viewBinding.videoCaptureButton.apply {
+                        text = getString(R.string.stop_capture)
+                        isEnabled = true
                     }
-                    is VideoRecordEvent.Finalize -> {
-                        if (!recordEvent.hasError()) {
-                            val msg = "Video capture succeeded: " +
-                                    "${recordEvent.outputResults.outputUri}"
-                            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
-                                .show()
-                          log(msg)
-                        } else {
-                            recording?.close()
-                            recording = null
-                            log("Video capture ends with error: " +
-                                    "${recordEvent.error}")
-                        }
-                        viewBinding.videoCaptureButton.apply {
-                            text = getString(R.string.start_capture)
-                            isEnabled = true
-                        }
+                }
+
+                is VideoRecordEvent.Finalize -> {
+                    if (!recordEvent.hasError()) {
+                        val msg =
+                            "Video capture succeeded: " + "${recordEvent.outputResults.outputUri}"
+                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                        log(msg)
+                    } else {
+                        recording?.close()
+                        recording = null
+                        log(
+                            "Video capture ends with error: " + "${recordEvent.error}"
+                        )
+                    }
+                    viewBinding.videoCaptureButton.apply {
+                        text = getString(R.string.start_capture)
+                        isEnabled = true
                     }
                 }
             }
+        }
 
     }
 
@@ -197,11 +213,9 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(viewBinding.viewFinder.surfaceProvider)
-                }
+            val preview = Preview.Builder().build().also {
+                it.setSurfaceProvider(viewBinding.viewFinder.surfaceProvider)
+            }
 //            val imageAnalyzer = ImageAnalysis.Builder().build().also {
 //                it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
 //                    log("Average luminosity: $luma")
@@ -209,10 +223,11 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
 //            }
             imageCapture = ImageCapture.Builder().build()
 
-            val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.HIGHEST,
-                    FallbackStrategy.higherQualityOrLowerThan(Quality.SD)))
-                .build()
+            val recorder = Recorder.Builder().setQualitySelector(
+                QualitySelector.from(
+                    Quality.HIGHEST, FallbackStrategy.higherQualityOrLowerThan(Quality.SD)
+                )
+            ).build()
             videoCapture = VideoCapture.withOutput(recorder)
 
             // Select back camera as a default
@@ -224,10 +239,14 @@ class CameraXActivity : BaseActivity<ActivityCameraXBinding>() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture,videoCapture
+                camera = cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, imageCapture, videoCapture
                 )
-
+                val torchState = camera?.cameraInfo?.torchState?.value
+                viewBinding.ivTorch.isSelected = torchState == TorchState.ON
+                val cameraInfo = camera?.cameraInfo
+                val hasFlashUnit = cameraInfo?.hasFlashUnit()
+                log("确定手电筒功能是否可用 $hasFlashUnit")
             } catch (exc: Exception) {
                 log("Use case binding failed $exc")
             }
