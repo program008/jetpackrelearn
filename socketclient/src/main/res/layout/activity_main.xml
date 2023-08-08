@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Client"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_server_ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Server"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <EditText
+        android:id="@+id/et_server_ip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="服务器IP地址"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textSize="14sp"
+        android:text="192.168.3.13"
+        app:layout_constraintBottom_toBottomOf="@id/tv_server_ip"
+        app:layout_constraintLeft_toRightOf="@id/tv_server_ip"
+        app:layout_constraintRight_toLeftOf="@id/btn_conn_server"
+        app:layout_constraintTop_toTopOf="@id/tv_server_ip" />
+
+    <Button
+        android:id="@+id/btn_conn_server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="connect"
+        app:layout_constraintBottom_toBottomOf="@id/tv_server_ip"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_server_ip" />
+
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Msg"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_server_ip" />
+
+    <EditText
+        android:id="@+id/et_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="输入消息"
+        android:textSize="14sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_content"
+        app:layout_constraintLeft_toRightOf="@id/tv_content"
+        app:layout_constraintRight_toLeftOf="@id/btn_content_send"
+        app:layout_constraintTop_toTopOf="@id/tv_content" />
+    <Button
+        android:id="@+id/btn_content_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="send"
+        app:layout_constraintBottom_toBottomOf="@id/tv_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_content" />
+    <TextView
+        android:id="@+id/tv_server_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="server msg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_content"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="16sp"/>
+    <TextView
+        android:id="@+id/tv_receive_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="消息开始"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_server_msg"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 rootProject.name = "jetpackrelearn"
 include ':app'
 include ':mylibrary'
+include ':socketclient'
+include ':socketserver'
