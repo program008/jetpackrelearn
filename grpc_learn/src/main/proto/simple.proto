@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.simple";
+option java_outer_classname = "SimpleProto";
+
+package simple;
+
+service Heartbeat {
+    rpc SayHi (Request) returns (Reply) {}
+    rpc ClientStream(stream Request) returns (Reply){}
+    rpc ServerStream(Request) returns (stream Reply){}
+    rpc BothStream(stream Request) returns (stream Reply){}
+}
+message Request {
+    string rep_info = 1;
+}
+message Reply {
+    string rep_info = 1;
+}

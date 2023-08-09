@@ -5,14 +5,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="grpc"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"/>
+   <Button
+       android:id="@+id/btn_simple_unary_mode"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="简单一元模式"
+       android:layout_marginTop="16dp"
+       app:layout_constraintLeft_toLeftOf="parent"
+       app:layout_constraintTop_toBottomOf="@id/tv_title"
+       android:layout_marginStart="16dp"/>
+    <Button
+        android:id="@+id/btn_client_stream_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="客户端流模式"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_simple_unary_mode"
+        android:layout_marginStart="16dp"/>
+    <Button
+        android:id="@+id/btn_server_stream_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="服务端流模式"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_client_stream_mode"
+        android:layout_marginStart="16dp"/>
+    <Button
+        android:id="@+id/btn_bothway_stream_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="双向流模式     "
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_server_stream_mode"
+        android:layout_marginStart="16dp"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

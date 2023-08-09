@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.protobuf' // proto
 }
 
 android {
@@ -33,8 +34,49 @@ android {
     viewBinding {
         enabled = true
     }
-}
 
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+
+            proto {
+                srcDir 'src/main/proto' // 模块下的proto文件夹
+                include '**/*.proto'
+            }
+        }
+    }
+
+    packagingOptions {
+        exclude 'plugin.xml'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/plexus/components.xml'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
+}
+protobuf {
+    protoc { artifact = 'com.google.protobuf:protoc:3.12.0' } // 相当于proto编译器
+    plugins {
+        grpc { artifact = 'io.grpc:protoc-gen-grpc-java:1.33.0' } // Grpc单独的编译器
+
+        javalite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0' // 官方推荐的方法，Android 适用javalite,相较于java插件，生成的代码更轻量化
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java { option 'lite' }
+            }
+            task.plugins {
+                grpc { // Options added to --grpc_out
+                    option 'lite' }
+            }
+        }
+    }
+}
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
@@ -46,4 +88,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation project(path: ':mylibrary')
+    implementation 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+    implementation 'io.grpc:grpc-netty:1.42.0'
+    implementation 'io.grpc:grpc-okhttp:1.42.0'
+    implementation 'io.grpc:grpc-protobuf-lite:1.42.0'
+    implementation 'io.grpc:grpc-stub:1.42.0'
 }

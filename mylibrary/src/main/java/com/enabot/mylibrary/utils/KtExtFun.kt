@@ -69,7 +69,7 @@ object ViewKtxHelper {
  * 简化日志打印
  */
 fun Any.log(contents: String, type: Int = Log.ERROR) {
-    val tag = "ebo-x " + this.javaClass.simpleName
+    val tag = "[ryan] " + this.javaClass.simpleName
     when (type) {
         Log.ERROR -> Log.e(tag, contents)
         Log.DEBUG -> Log.d(tag, contents)
