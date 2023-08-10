@@ -90,6 +90,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SensorEventListener {
             val intent = Intent(this, CameraXActivity::class.java)
             startActivity(intent)
         }
+        //pdf 显示
+        viewBinding.btnPdfView.setOnUnFastClickListener {
+            val intent = Intent(this, PdfViewActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setSensorListener() {

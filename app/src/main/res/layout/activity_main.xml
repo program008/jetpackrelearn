@@ -36,6 +36,14 @@
         android:text="相机 camera2"
         app:layout_constraintLeft_toLeftOf="@id/btn_camera_x"
         app:layout_constraintBottom_toTopOf="@id/btn_camera_x"/>
+    <Button
+        android:id="@+id/btn_pdf_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PDF 显示"
+        app:layout_constraintLeft_toLeftOf="@id/btn_camera_camera2"
+        app:layout_constraintBottom_toTopOf="@id/btn_camera_camera2"/>
+
     <TextView
         android:id="@+id/tv_show"
         android:layout_width="wrap_content"
