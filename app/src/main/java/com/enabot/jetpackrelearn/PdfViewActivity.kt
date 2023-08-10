@@ -10,9 +10,9 @@ import java.io.File
  * @author liu tao
  * @date 2023/8/10 11:18
  * @description
- * [pdf view](https://github.com/barteksc/AndroidPdfViewer)
+ *
  */
-class PdfViewActivity:BaseActivity<ActivityPdfViewBinding>() {
+class PdfViewActivity : BaseActivity<ActivityPdfViewBinding>() {
     override fun initViewBinding(): ActivityPdfViewBinding {
         return ActivityPdfViewBinding.inflate(layoutInflater)
     }
@@ -21,12 +21,16 @@ class PdfViewActivity:BaseActivity<ActivityPdfViewBinding>() {
         initWebViews()
     }
 
+    /**
+     * pdf
+     * {@link `https://github.com/barteksc/AndroidPdfViewer` AndroidPdfViewer} for details
+     */
     private fun initWebViews() {
         viewBinding.pdfView.maxZoom = 5F
         viewBinding.pdfView.minZoom = 3F
         viewBinding.pdfView.minZoom = 1F
         viewBinding.pdfView.fromAsset("Product_en.pdf")
-        //viewBinding.pdfView.fromFile(file)
+            //viewBinding.pdfView.fromFile(file)
 //            .pages(0, 2, 1, 3, 3, 3) // all pages are displayed by default
             .enableSwipe(true) // allows to block changing pages using swipe
             .swipeHorizontal(false)
