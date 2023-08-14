@@ -1,10 +1,5 @@
 package com.enabot.media3
 
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
-import android.content.Intent
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
