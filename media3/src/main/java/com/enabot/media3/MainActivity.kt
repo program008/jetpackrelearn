@@ -167,6 +167,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         viewBinding.playerView.player = null
     }
 
+    /**
+     * MediaController
+     */
     private fun initialize() {
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         browserFuture = MediaBrowser.Builder(this, sessionToken).buildAsync()
