@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:use_artwork="true"
+        app:artwork_display_mode="fill"
+        app:resize_mode="fill"
+        app:show_buffering="always"
+        app:use_controller="true"
+        app:hide_on_touch="true"
+        app:auto_show="true"
+        app:show_shuffle_button="true"
+        app:show_subtitle_button="true"
+        app:show_vr_button="true"
+        app:time_bar_min_update_interval="1000"
+        app:animation_enabled="true"
+        />
+
+    <Button
+        android:id="@+id/btn_play_single_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="play single video"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/btn_play_multi_video"
+        app:layout_constraintTop_toBottomOf="@id/player_view" />
+
+    <Button
+        android:id="@+id/btn_play_multi_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="play multi video"
+        app:layout_constraintLeft_toRightOf="@id/btn_play_single_video"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/player_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
