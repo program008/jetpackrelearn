@@ -2,21 +2,19 @@ package com.enabot.media3
 
 
 import android.annotation.SuppressLint
-import android.os.Bundle
-import androidx.media3.common.ForwardingPlayer
+import android.content.ComponentName
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.session.MediaSession
-import androidx.media3.session.SessionCommand
-import androidx.media3.session.SessionResult
+import androidx.media3.session.MediaBrowser
+import androidx.media3.session.SessionToken
 import com.enabot.media3.databinding.ActivityMainBinding
 import com.enabot.mylibrary.BaseActivity
 import com.enabot.mylibrary.utils.log
 import com.enabot.mylibrary.utils.setOnUnFastClickListener
-import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 
 /**
  * 音频与视频 media3
@@ -48,6 +46,9 @@ import com.google.common.util.concurrent.ListenableFuture
  *
  */
 class MainActivity : BaseActivity<ActivityMainBinding>() {
+    private lateinit var browserFuture: ListenableFuture<MediaBrowser>
+    private val browser: MediaBrowser?
+        get() = if (browserFuture.isDone) browserFuture.get() else null
     val url = "https://media.w3.org/2010/05/sintel/trailer.mp4"
     override fun initViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
@@ -60,7 +61,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 //停止之前播放的视频
                 stop()
                 //设置单个资源
-                setMediaItem(MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-0/play.mp3"))
+                setMediaItem(MediaItem.fromUri(url))
                 //开始缓冲
                 prepare()
             }
@@ -137,6 +138,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        initialize()
+    }
+
     override fun onResume() {
         super.onResume()
         //恢复播放
@@ -149,10 +155,37 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         viewBinding.playerView.onPause()
     }
 
+    override fun onStop() {
+        release()
+        super.onStop()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         //释放播放器资源
         viewBinding.playerView.player?.release()
         viewBinding.playerView.player = null
+    }
+
+    private fun initialize() {
+        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
+        browserFuture = MediaBrowser.Builder(this, sessionToken).buildAsync()
+        browserFuture.addListener({
+            // here we can get the root of media items tree or we can get also the children if it is an album for example.
+            log("-------browserFuture-------")
+            playAudio(MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-0/play.mp3"))
+        }, MoreExecutors.directExecutor())
+    }
+
+    private fun release() {
+        MediaBrowser.releaseFuture(browserFuture)
+    }
+
+    private fun playAudio(mediaItem: MediaItem) {
+        with(browser) {
+            this?.setMediaItem(mediaItem)
+            this?.prepare()
+            this?.play()
+        }
     }
 }
