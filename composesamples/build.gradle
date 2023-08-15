@@ -51,6 +51,12 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.activity:activity-compose:1.7.2'
+    /**
+     * BOM 是一个 Maven 模块，它声明一组库和版本的对应关系，将能极大地简化你在 Gradle 依赖块中定义 Compose 库版本的方式。
+     * 您现在只需要定义一个 BOM 版本，就可以同时指定所有的 Compose 库版本，
+     * 而不是分别定义每个版本(当库版本开始不同时，这可能会变得很麻烦并且容易出错)。每当 Compose 有一个新的稳定版本时，
+     * 我们都将发布一个新的 BOM 版本，因此从稳定版本迁移到新的稳定版本将会十分轻松
+     */
     implementation platform('androidx.compose:compose-bom:2023.03.00')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
