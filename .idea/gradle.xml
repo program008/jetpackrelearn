@@ -13,6 +13,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/composesamples" />
             <option value="$PROJECT_DIR$/grpc_learn" />
             <option value="$PROJECT_DIR$/media3" />
             <option value="$PROJECT_DIR$/mylibrary" />
