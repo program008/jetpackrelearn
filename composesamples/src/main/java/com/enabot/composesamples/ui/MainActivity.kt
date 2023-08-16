@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,7 +45,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,6 +57,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.enabot.composesamples.R
 import com.enabot.composesamples.ui.theme.JetpackrelearnTheme
+import com.enabot.composesamples.ui.theme.welcomeAssets
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +74,9 @@ class MainActivity : ComponentActivity() {
                         "ali is beautiful girl,are you like her?ali is beautiful girl,are you like her?ali is beautiful girl,are you like her?"
                     )
                     JetpackrelearnTheme {
-                        MessageCard(message)
+                        Column {
+                            MessageCard(message)
+                        }
                     }
                 }
             }
@@ -121,6 +129,7 @@ fun MessageCard(message: Message) {
         shape = MaterialTheme.shapes.medium,
         shadowElevation = 5.dp,
         modifier = Modifier
+            .wrapContentSize()
             .padding(all = 8.dp),
         color = surfaceColor
     ) {
@@ -130,15 +139,28 @@ fun MessageCard(message: Message) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = "https://picsum.photos/300/300"),
+                painter = rememberAsyncImagePainter(
+                    model = "https://picsum.photos/300/300",
+                    placeholder = painterResource(
+                        id = R.drawable.sticker
+                    )
+                ),
                 contentDescription = null,
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)
-                    .border(1.5.dp, MaterialTheme.colorScheme.secondary, shape = CircleShape)
+                    .border(
+                        1.5.dp, MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
+                    )
             )
             Spacer(Modifier.padding(horizontal = 8.dp)) // 添加一个空的控件用来填充水平间距，设置 padding 为 8.dp
             Column(modifier = Modifier.weight(1f)) {
+                Image(
+                    painter = rememberVectorPainter(image = ImageVector.vectorResource(id = MaterialTheme.welcomeAssets.logo)),
+                    contentDescription = null,
+                    modifier = Modifier.wrapContentSize()
+                )
                 Text(
                     text = message.author,
                     color = MaterialTheme.colorScheme.primary,
@@ -151,20 +173,25 @@ fun MessageCard(message: Message) {
                     maxLines = if (isExpanded) Int.MAX_VALUE else 1,
                     modifier = Modifier.animateContentSize()
                 )
+                Button(
+                    onClick = { isExpanded = !isExpanded },
+                    interactionSource = interactionState,
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = buttonColor,
+                    ),
+                    modifier = Modifier
+                        .height(30.dp)
+                ) {
+                    Text(text = text, fontSize = 12.sp)
+                }
             }
             Spacer(Modifier.padding(horizontal = 8.dp))
-            Button(
-                onClick = { isExpanded = !isExpanded },
-                interactionSource = interactionState,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = buttonColor,
-                ),
-                modifier = Modifier
-                    .height(30.dp)
-            ) {
-                Text(text = text, fontSize = 12.sp)
-            }
+            Image(
+                painter = rememberVectorPainter(image = ImageVector.vectorResource(id = MaterialTheme.welcomeAssets.illos)),
+                contentDescription = null,
+                modifier = Modifier.size(80.dp, 80.dp)
+            )
         }
     }
 }

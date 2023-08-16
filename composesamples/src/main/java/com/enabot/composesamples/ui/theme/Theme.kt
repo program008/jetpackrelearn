@@ -9,11 +9,15 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.enabot.composesamples.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -36,6 +40,27 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+
+open class WelcomeAssets(var background: Int, var illos: Int, var logo: Int)
+
+object LightWelcomeAssets : WelcomeAssets(
+    background = R.drawable.ic_light_welcome_bg,
+    illos = R.drawable.ic_light_welcome_illos,
+    logo = R.drawable.ic_light_logo
+)
+
+object DarkWelcomeAssets : WelcomeAssets(
+    background = R.drawable.ic_dark_welcome_bg,
+    illos = R.drawable.ic_dark_welcome_illos,
+    logo = R.drawable.ic_dark_logo
+)
+
+internal var LocalWelcomeAssets = staticCompositionLocalOf { LightWelcomeAssets as WelcomeAssets }
+
+val MaterialTheme.welcomeAssets
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalWelcomeAssets.current
 
 @Composable
 fun JetpackrelearnTheme(
@@ -61,10 +86,15 @@ fun JetpackrelearnTheme(
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
+    val welcomeAssets = if (darkTheme) DarkWelcomeAssets else LightWelcomeAssets
+    CompositionLocalProvider(
+        LocalWelcomeAssets provides welcomeAssets,
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
 }
