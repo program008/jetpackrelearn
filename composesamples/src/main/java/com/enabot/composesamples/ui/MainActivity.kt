@@ -54,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -319,47 +320,57 @@ fun PreMessageCard() {
  * - ChainStyle.SpreadInside：空间会在所有可组合项之间均匀分布，不包括第一个可组合项之前或最后一个可组合项之后的任何可用空间。
  * - ChainStyle.Packed：空间会分布在第一个可组合项之前和最后一个可组合项之后，各个可组合项之间没有空间，会挤在一起。
  */
-@Preview(name = "Light Mode")
+@Preview(
+    name = "Light Mode",
+    wallpaper = Wallpapers.YELLOW_DOMINATED_EXAMPLE
+)
 @Composable
 fun ConstraintLayoutTest() {
-    Surface(modifier = Modifier.fillMaxWidth()) {
-        ConstraintLayout {
-            val (button1, button2) = createRefs()
-            val startGuideline = createGuidelineFromStart(0.5f)
-            Button(onClick = { /*TODO*/ },
-                modifier = Modifier.constrainAs(button1) {
-                    top.linkTo(parent.top, margin = 16.dp)
-                    end.linkTo(startGuideline)
+    JetpackrelearnTheme {
+        Surface(modifier = Modifier.fillMaxWidth()) {
+            ConstraintLayout {
+                val (button1, button2) = createRefs()
+                val startGuideline = createGuidelineFromStart(0.5f)
+                Button(onClick = { /*TODO*/ },
+                    modifier = Modifier.constrainAs(button1) {
+                        top.linkTo(parent.top, margin = 16.dp)
+                        end.linkTo(startGuideline)
+                    }) {
+                    Text(text = "button1")
+                }
+                Button(onClick = { /*TODO*/ },
+                    modifier = Modifier.constrainAs(button2) {
+                        top.linkTo(parent.top, margin = 8.dp)
+                        start.linkTo(startGuideline)
+                    }) {
+                    Text(text = "button2")
+                }
+                val barrier = createBottomBarrier(button1, button2)
+                val button3 = createRef()
+                Button(onClick = { /*TODO*/ },
+                    modifier = Modifier.constrainAs(button3) {
+                        top.linkTo(barrier)
+                        start.linkTo(parent.start)
+                    }) {
+                    Text(text = "button3")
+                }
+                val (button4, button5) = createRefs()
+                val chain = createHorizontalChain(
+                    button3,
+                    button4,
+                    button5,
+                    chainStyle = ChainStyle.SpreadInside
+                )
+                Button(onClick = { /*TODO*/ }, modifier = Modifier.constrainAs(button4) {
+                    top.linkTo(button3.top)
                 }) {
-                Text(text = "button1")
-            }
-            Button(onClick = { /*TODO*/ },
-                modifier = Modifier.constrainAs(button2) {
-                    top.linkTo(parent.top, margin = 8.dp)
-                    start.linkTo(startGuideline)
+                    Text(text = "button4")
+                }
+                Button(onClick = { /*TODO*/ }, modifier = Modifier.constrainAs(button5) {
+                    top.linkTo(button3.top)
                 }) {
-                Text(text = "button2")
-            }
-            val barrier = createBottomBarrier(button1, button2)
-            val button3 = createRef()
-            Button(onClick = { /*TODO*/ },
-                modifier = Modifier.constrainAs(button3) {
-                    top.linkTo(barrier)
-                    start.linkTo(parent.start)
-                }) {
-                Text(text = "button3")
-            }
-            val (button4,button5) = createRefs()
-            val chain = createHorizontalChain(button3,button4,button5, chainStyle = ChainStyle.SpreadInside)
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.constrainAs(button4){
-                top.linkTo(button3.top)
-            }) {
-                Text(text = "button4")
-            }
-            Button(onClick = { /*TODO*/ },modifier = Modifier.constrainAs(button5){
-                top.linkTo(button3.top)
-            }) {
-                Text(text = "button5")
+                    Text(text = "button5")
+                }
             }
         }
     }
