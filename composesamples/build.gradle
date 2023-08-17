@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.enabot.composesamples'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.enabot.composesamples"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -79,5 +79,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation "com.google.accompanist:accompanist-flowlayout:0.20.0"
     implementation "com.airbnb.android:lottie-compose:5.2.0"
-    implementation "androidx.navigation:navigation-compose:2.5.3"
+    def nav_version = "2.7.0"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
 }
