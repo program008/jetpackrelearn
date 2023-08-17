@@ -19,6 +19,7 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -112,7 +114,7 @@ fun HomePage() {
             Text(
                 text = "Browse themes",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .paddingFromBaseline(top = 32.dp, bottom = 16.dp)
@@ -138,7 +140,7 @@ fun HomePage() {
             Text(
                 text = "Design your home garden",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .paddingFromBaseline(top = 40.dp)
             )
@@ -216,7 +218,7 @@ fun DesignCard(plant: Item) {
                 )
             }
             Divider(
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 16.dp),
                 thickness = 0.5.dp
             )
@@ -268,7 +270,12 @@ fun SearchBar() {
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
+            .border(
+                1.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(color = Color.White)
             .padding(horizontal = 16.dp),
         decorationBox = { innerTextField ->
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -279,7 +286,7 @@ fun SearchBar() {
                 )
                 Box(modifier = Modifier.weight(1f)) {
                     if (text.isEmpty()) {
-                        Text(text = "请输入内容", color = Color(0xff999999), fontSize = 13.sp)
+                        Text(text = "请输入内容", color = Color(0xff999999), fontSize = 16.sp)
                     }
                     innerTextField()
                 }

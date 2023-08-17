@@ -112,7 +112,10 @@ fun LoginPage(navHostController: NavHostController? = null) {
                 textAlign = TextAlign.Center
             )
             Button(
-                onClick = { navHostController?.navigate(RouterPath.HOME) },
+                onClick = {
+                    navHostController?.popBackStack()
+                    navHostController?.navigate(RouterPath.HOME)
+                },
                 modifier = Modifier
                     .height(48.dp)
                     .fillMaxWidth()

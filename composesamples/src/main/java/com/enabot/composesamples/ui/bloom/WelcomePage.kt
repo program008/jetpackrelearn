@@ -111,6 +111,7 @@ fun WelcomePage(navHostController: NavHostController? = null) {
                     }
                     TextButton(
                         onClick = {
+                            navHostController?.popBackStack()
                             navHostController?.navigate(RouterPath.LOGIN)
                         },
                         modifier = Modifier
