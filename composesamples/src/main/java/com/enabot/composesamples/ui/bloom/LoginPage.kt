@@ -47,7 +47,7 @@ import com.enabot.composesamples.ui.theme.JetpackrelearnTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navHostController: NavHostController? = null) {
+fun LoginPage(name:String?,age:Int,navHostController: NavHostController? = null) {
     var email by remember { mutableStateOf("") }
     var pwd by remember { mutableStateOf("") }
     CompositionLocalProvider(LocaleNavHostController provides navHostController) {
@@ -129,6 +129,7 @@ fun LoginPage(navHostController: NavHostController? = null) {
                     color = MaterialTheme.colorScheme.onSecondary
                 )
             }
+            Text(text = "上一个界面传递的必要参数${name},${age}")
         }
     }
 }
@@ -137,7 +138,7 @@ fun LoginPage(navHostController: NavHostController? = null) {
 @Preview
 fun LoginPageLightPreview() {
     JetpackrelearnTheme() {
-        LoginPage()
+        LoginPage("张三",25)
     }
 }
 
@@ -146,6 +147,6 @@ fun LoginPageLightPreview() {
 @Composable
 fun LoginPageDarkPreview() {
     JetpackrelearnTheme() {
-        LoginPage()
+        LoginPage("张三",25)
     }
 }

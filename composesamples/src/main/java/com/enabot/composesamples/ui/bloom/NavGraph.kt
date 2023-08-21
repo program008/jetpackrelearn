@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 //anim {
 //                this.enter = R.anim.slide_in_right
@@ -36,7 +38,21 @@ object RouterPath {
     val LOGIN = "login"
     val HOME = "home"
 }
+
+object ParamsConfig {
+    /**
+     * 参数-name
+     */
+    const val PARAMS_NAME = "name"
+
+    /**
+     * 参数-age
+     */
+    const val PARAMS_AGE = "age"
+}
+
 val LocaleNavHostController = compositionLocalOf<NavHostController?> { error("no init controller") }
+
 @Composable
 fun NavGraph(window: Window) {
     val navHostController = rememberNavController()
@@ -45,9 +61,21 @@ fun NavGraph(window: Window) {
             window.statusBarColor = MaterialTheme.colorScheme.primary.toArgb()
             WelcomePage(navHostController)
         }
-        composable(RouterPath.LOGIN) {
+        composable("${RouterPath.LOGIN}/{${ParamsConfig.PARAMS_NAME}}?${ParamsConfig.PARAMS_AGE}={${ParamsConfig.PARAMS_AGE}}",
+            arguments = listOf(
+                //必传参数
+                navArgument(ParamsConfig.PARAMS_NAME) {},
+                navArgument(ParamsConfig.PARAMS_AGE) {
+                    defaultValue = 30
+                    type = NavType.IntType
+                }
+            )
+        ) {
             window.statusBarColor = MaterialTheme.colorScheme.background.toArgb()
-            LoginPage(navHostController)
+            val argument = requireNotNull(it.arguments)
+            val name = argument.getString(ParamsConfig.PARAMS_NAME)
+            val age = argument.getInt(ParamsConfig.PARAMS_AGE)
+            LoginPage(name, age, navHostController)
         }
         composable(RouterPath.HOME) {
             window.statusBarColor = MaterialTheme.colorScheme.background.toArgb()

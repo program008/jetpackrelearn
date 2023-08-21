@@ -112,7 +112,7 @@ fun WelcomePage(navHostController: NavHostController? = null) {
                     TextButton(
                         onClick = {
                             navHostController?.popBackStack()
-                            navHostController?.navigate(RouterPath.LOGIN)
+                            navHostController?.navigate("${RouterPath.LOGIN}/林秦?${ParamsConfig.PARAMS_AGE}=28")
                         },
                         modifier = Modifier
                             .padding(top = 8.dp)
