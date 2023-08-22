@@ -1,6 +1,7 @@
 package com.enabot.mylibrary.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -19,9 +20,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.collection.ArrayMap
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -30,11 +33,15 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.size
+import androidx.fragment.app.Fragment
 import com.enabot.mylibrary.utils.ViewKtxHelper.isFastClick
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.abs
 
 /**
@@ -466,4 +473,81 @@ fun Context.getTextWidth(text: String?, textSize: Float): Float {
     val paint = Paint() //创建一个画笔对象
     paint.textSize = textSize //设置画笔的文字大小
     return paint.measureText(text) //利用画笔丈量指定文本的宽度
+}
+
+fun View.gone() = run { visibility = View.GONE }
+
+fun View.visible() = run { visibility = View.VISIBLE }
+
+infix fun View.visibleIf(condition: Boolean) =
+    run { visibility = if (condition) View.VISIBLE else View.GONE }
+
+infix fun View.goneIf(condition: Boolean) =
+    run { visibility = if (condition) View.GONE else View.VISIBLE }
+
+infix fun View.invisibleIf(condition: Boolean) =
+    run { visibility = if (condition) View.INVISIBLE else View.VISIBLE }
+fun Fragment.toast(message: String) {
+    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+}
+
+fun Fragment.toast(@StringRes message: Int) {
+    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+}
+
+fun Activity.toast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+}
+
+fun Activity.toast(@StringRes message: Int) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+}
+
+fun View.snackbar(message: String, duration: Int = Snackbar.LENGTH_LONG) {
+    Snackbar.make(this, message, duration).show()
+}
+
+fun View.snackbar(@StringRes message: Int, duration: Int = Snackbar.LENGTH_LONG) {
+    Snackbar.make(this, message, duration).show()
+}
+fun Activity.hideKeyboard() {
+    val imm: InputMethodManager =
+        getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    val view = currentFocus ?: View(this)
+    imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+}
+
+fun Fragment.hideKeyboard() {
+    activity?.apply {
+        val imm: InputMethodManager =
+            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus ?: View(this)
+        imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+}
+
+val String.isDigitOnly: Boolean
+    get() = matches(Regex("^\\d*\$"))
+
+val String.isAlphabeticOnly: Boolean
+    get() = matches(Regex("^[a-zA-Z]*\$"))
+
+val String.isAlphanumericOnly: Boolean
+    get() = matches(Regex("^[a-zA-Z\\d]*\$"))
+
+val Any?.isNull get() = this == null
+fun Any?.ifNull(block: () -> Unit) = run {
+    if (this == null) {
+        block()
+    }
+}
+
+fun String.toDate(format: String = "yyyy-MM-dd HH:mm:ss"): Date? {
+    val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+    return dateFormatter.parse(this)
+}
+
+fun Date.toStringFormat(format: String = "yyyy-MM-dd HH:mm:ss"): String {
+    val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+    return dateFormatter.format(this)
 }
