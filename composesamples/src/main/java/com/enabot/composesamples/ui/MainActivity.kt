@@ -1,5 +1,6 @@
 package com.enabot.composesamples.ui
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -15,17 +17,23 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +66,8 @@ import com.enabot.composesamples.R
 import com.enabot.composesamples.ui.theme.JetpackrelearnTheme
 import com.enabot.composesamples.ui.theme.welcomeAssets
 import com.enabot.composesamples.ui.bloom.NavGraph
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -396,6 +407,74 @@ private fun decoupledConstraints(margin: Dp): ConstraintSet {
             top.linkTo(button1.bottom)
             start.linkTo(button1.end)
         }
+    }
+}
+
+/**
+ * Stop Using ViewModel To Manage Your State
+ * ViewModels should be used if you want to access the business logic,
+ * and you need to update the state depending on what you get provided
+ * from the business logic, but if you just want to deal with the state
+ * of your UI then using view models would be an overkill for this you
+ * also can just put your state in your composable function.
+ *
+ * but it wouldn’t look nice.
+ * 如何改变，实现状态分离
+ * - 1.创建一个状态类封装状态
+ * - 2.创建composable 函数rememberScreenState，可普通变量变成remember变量
+ * - 3.在需要使用这些状态的composable函数中引入函数rememberScreenState，该函数中包括了所有的状态。
+ */
+class ScreenState(
+    val snackbarHostState: SnackbarHostState,
+    val scope: CoroutineScope,
+    val scrollState: ScrollState
+) {
+    var counter by mutableStateOf(0)
+
+    var isButtonVisible by mutableStateOf(false)
+
+    fun showSnackBar(message: String) {
+        scope.launch {
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+}
+
+@Composable
+fun rememberScreenState(
+    scaffoldState: SnackbarHostState = remember { SnackbarHostState() },
+    scope: CoroutineScope = rememberCoroutineScope(),
+    scrollState: ScrollState = rememberScrollState()
+) = remember {
+    ScreenState(scaffoldState, scope, scrollState)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Preview
+@Composable
+fun Screen() {
+    val screenState = rememberScreenState() //all the state is here
+    Scaffold(snackbarHost = { SnackbarHost(screenState.snackbarHostState) }) {
+        if (screenState.isButtonVisible) {
+            screenState.showSnackBar("good job!!")
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 16.dp)
+        ) {
+            Button(onClick = {
+                ++screenState.counter
+                screenState.isButtonVisible = !screenState.isButtonVisible
+            }) {
+                Text(text = "click me ${screenState.counter}")
+            }
+            Text(text = "是否显示snackbar ${screenState.isButtonVisible}")
+        }
+
+        //the rest of the Ui
     }
 }
 
