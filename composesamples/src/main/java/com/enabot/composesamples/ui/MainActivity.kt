@@ -450,12 +450,11 @@ fun rememberScreenState(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview
 @Composable
 fun Screen() {
     val screenState = rememberScreenState() //all the state is here
-    Scaffold(snackbarHost = { SnackbarHost(screenState.snackbarHostState) }) {
+    Scaffold(snackbarHost = { SnackbarHost(screenState.snackbarHostState) }) { padding ->
         if (screenState.isButtonVisible) {
             screenState.showSnackBar("good job!!")
         }
@@ -463,7 +462,7 @@ fun Screen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 16.dp)
+                .padding(padding)
         ) {
             Button(onClick = {
                 ++screenState.counter
