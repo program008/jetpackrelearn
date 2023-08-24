@@ -10,8 +10,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.enabot.appdatafile.FileUtils.sharedPreferences
 import com.enabot.appdatafile.ui.theme.JetpackrelearnTheme
 
+/**
+ * # 持久化存储
+ *
+ * ## 1.文件存储
+ * ## 2.键值对存储
+ * ## 3.数据库存储
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
