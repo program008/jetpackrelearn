@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/grpc_learn" />
             <option value="$PROJECT_DIR$/media3" />
             <option value="$PROJECT_DIR$/mylibrary" />
+            <option value="$PROJECT_DIR$/myview" />
             <option value="$PROJECT_DIR$/socketclient" />
             <option value="$PROJECT_DIR$/socketserver" />
           </set>
