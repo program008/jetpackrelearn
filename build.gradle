@@ -5,12 +5,3 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
     id 'com.google.protobuf' version '0.9.1' apply false
 }
-
-allprojects {
-    gradle.projectsEvaluated {
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-            kotlinOptions.freeCompilerArgs += ["-opt-in=kotlin.ExperimentalStdlibApi"]
-        }
-
-    }
-}

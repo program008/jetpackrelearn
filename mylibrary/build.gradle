@@ -45,8 +45,8 @@ dependencies {
     api 'pub.devrel:easypermissions:3.0.0'
     api 'com.google.code.gson:gson:2.9.0'
 
-    api 'androidx.activity:activity-ktx:1.7.0'
-    api 'androidx.fragment:fragment-ktx:1.5.6'
+    api 'androidx.activity:activity-ktx:1.7.2'
+    api 'androidx.fragment:fragment-ktx:1.6.0'
 
     // ViewModel
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
@@ -54,7 +54,7 @@ dependencies {
     api "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
     // Lifecycles only (without ViewModel or LiveData)
     api "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
     api 'com.github.mhiew:android-pdf-viewer:3.2.0-beta.3'
 }
