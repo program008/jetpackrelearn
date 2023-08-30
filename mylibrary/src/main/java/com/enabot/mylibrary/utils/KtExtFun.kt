@@ -2,16 +2,23 @@ package com.enabot.mylibrary.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.ImageFormat.JPEG
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
+import android.media.MediaCodec.MetricsConstants.MIME_TYPE
+import android.media.MediaScannerConnection
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -28,6 +35,7 @@ import androidx.annotation.StringRes
 import androidx.collection.ArrayMap
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -39,6 +47,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -487,6 +497,7 @@ infix fun View.goneIf(condition: Boolean) =
 
 infix fun View.invisibleIf(condition: Boolean) =
     run { visibility = if (condition) View.INVISIBLE else View.VISIBLE }
+
 fun Fragment.toast(message: String) {
     Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
 }
@@ -510,6 +521,7 @@ fun View.snackbar(message: String, duration: Int = Snackbar.LENGTH_LONG) {
 fun View.snackbar(@StringRes message: Int, duration: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(this, message, duration).show()
 }
+
 fun Activity.hideKeyboard() {
     val imm: InputMethodManager =
         getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -550,4 +562,79 @@ fun String.toDate(format: String = "yyyy-MM-dd HH:mm:ss"): Date? {
 fun Date.toStringFormat(format: String = "yyyy-MM-dd HH:mm:ss"): String {
     val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
     return dateFormatter.format(this)
+}
+
+/**
+ * Saves a bitmap as a PNG file.
+ *
+ * Note that `.png` extension is added to the filename.
+ */
+fun Bitmap.saveAsPNG(applicationContext: Context, filename: String) = "$filename.png".let { name ->
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        val file =
+            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
+        FileOutputStream(file).use { compress(Bitmap.CompressFormat.PNG, 100, it) }
+        MediaScannerConnection.scanFile(
+            applicationContext,
+            arrayOf(file.absolutePath), null, null
+        )
+        FileProvider.getUriForFile(
+            applicationContext,
+            "${applicationContext.packageName}.provider", file
+        )
+    } else {
+        val values = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+            put(MediaStore.Video.Media.IS_PENDING, 1)
+        }
+
+        val resolver = applicationContext.contentResolver
+        val uri = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
+        uri?.let { resolver.openOutputStream(it) }
+            ?.use { compress(Bitmap.CompressFormat.PNG, 100, it) }
+
+        values.clear()
+        values.put(MediaStore.Video.Media.IS_PENDING, 0)
+        uri?.also {
+            resolver.update(it, values, null, null)
+        }
+    }
+
+    /**
+     * Saves a bitmap as a Jpeg file.
+     *
+     * Note that `.jpg` extension is added to the filename.
+     */
+    fun Bitmap.saveAsJPG(applicationContext: Context, filename: String) =
+        "$filename.jpg".let { name ->
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+                FileOutputStream(
+                    File(
+                        applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                        name
+                    )
+                )
+                    .use { compress(Bitmap.CompressFormat.JPEG, 100, it) }
+            else {
+                val values = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    put(MediaStore.Video.Media.IS_PENDING, 1)
+                }
+
+                val resolver = applicationContext.contentResolver
+                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                uri?.let { resolver.openOutputStream(it) }
+                    ?.use { compress(Bitmap.CompressFormat.JPEG, 70, it) }
+
+                values.clear()
+                values.put(MediaStore.Video.Media.IS_PENDING, 0)
+                uri?.also {
+                    resolver.update(it, values, null, null)
+                }
+            }
+        }
 }
