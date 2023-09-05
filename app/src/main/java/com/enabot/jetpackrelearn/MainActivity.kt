@@ -1,7 +1,6 @@
 package com.enabot.jetpackrelearn
 
 
-import android.R.attr.gravity
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
@@ -33,6 +32,10 @@ import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Task
+import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 
@@ -95,6 +98,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SensorEventListener {
             val intent = Intent(this, PdfViewActivity::class.java)
             startActivity(intent)
         }
+
+        // jodatime test
+        //DateTimeZone zone = DateTimeZone.forID("Europe/London")
+        //val zone = DateTimeZone.forID("America/Santiago")
+        var now = DateTime.now()
+        val dateTime = LocalDateTime(2022, now.monthOfYear, now.dayOfMonth, now.hourOfDay, now.minuteOfHour)
+        val toString = dateTime.toString()
+        val date = Date(2023, 8, 5)
+        log("date=${date}")
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        log("对象转string ${sdf.format(date)}") //3923-09-05
+        log("jodatime test $toString zone=${now.zone.toString()}")
+
+        val parseDate = sdf.parse("2023-01-01") //Sun Jan 01 00:00:00 GMT+08:00 2023
+        log("parseDate=${parseDate}")
     }
 
     private fun setSensorListener() {
